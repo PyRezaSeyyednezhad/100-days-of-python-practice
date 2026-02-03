@@ -17,16 +17,7 @@ class Note:
         random_id_samples = sample("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 4)
         return "".join(random_id_samples)
     
-    def create_note(self, note_data: dict):
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        note_data[self.note_file_name] = {
-            "ID": self.generate_note_id(),
-            "Title": self.note_content_title,
-            "Body": self.note_content_body,
-            "Created_At": current_time,
-            "Updated_At": current_time
-        }
-        return note_data
+    
     
     def get_data_from_json_file(self):
         try:
@@ -36,6 +27,19 @@ class Note:
             data = {}
         return data
 
+    def create_note(self):
+        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        data = self.get_data_from_json_file()
+        data[self.note_file_name] = {
+            "ID": self.generate_note_id(),
+            "Title": self.note_content_title,
+            "Body": self.note_content_body,
+            "Created_At": current_time,
+            "Updated_At": current_time
+        }
+        with open("./files/notes-database.json", 'w') as f1:
+            f1.write(json.dumps(data))
+    
     def display_note(self):
         data = self.get_data_from_json_file()
         if self.note_file_name in data.keys():
@@ -120,8 +124,8 @@ def user_flow():
             user_note = Note(user_note_file_name, user_note_title, user_note_body)
             print("The Progress is in Process...\n Please Wait ...")
             sleep(2)
+            user_note.create_note()
             print(f"Progress Done. Here is your data. \n")
-            print(user_note.display_note())
         
         elif user_note_menu == 2:
             print("UPDATE NOTE")
@@ -134,7 +138,6 @@ def user_flow():
             sleep(2)
             user_note.update_note()
             print(f"Progress Done. Here is your data. \n")
-            print(user_note.display_note())
         
         elif user_note_menu == 3:
             print("DELETE NOTE")
