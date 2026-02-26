@@ -178,3 +178,155 @@ def access_data_of_spreadsheet():
 
 # access_data_of_spreadsheet()
 
+# HW: Create a function that turn excel header to dictionary
+def excel_header_to_dict():
+    from openpyxl import load_workbook
+    import json
+    workbook = load_workbook(filename="./files/openpyxl_files/openpyxl_sample_data.xlsx")
+    sheet = workbook.active
+    products = {}
+    for row in sheet.iter_rows(min_row=2, max_row=5, min_col=4, max_col=7, values_only=True):
+        product_id = row[0]
+        product = {
+            "parent": row[1],
+            "title": row[2],
+            "category": row[3],
+        }
+        products[product_id] = product
+    
+    print(f"Product Header Dictionary: {json.dumps(products)}")
+
+# excel_header_to_dict()
+
+# HW: Convert Excel Header to Python Class
+from dataclasses import dataclass
+from datetime import datetime
+@dataclass
+class Product:
+    product_id: str
+    product_parent: str
+    product_title: str
+    product_category: str
+
+@dataclass
+class Review:
+    review_id: str
+    review_headline: str
+    review_body: str
+    star_rating: int
+    helpful_votes: int
+    total_votes: int
+    review_date: datetime
+
+def excel_header_to_class():
+    from openpyxl import load_workbook
+    workbook = load_workbook(filename="./files/openpyxl_files/openpyxl_sample_data.xlsx")
+    sheet = workbook.active
+    products = []
+    reviews = []
+    
+    for row in sheet.iter_rows(min_row=2, values_only=True):
+        product = Product(product_id=row[3], product_parent=row[4], product_title=row[5], product_category=row[6])
+        review_date = row[14]
+        convert_date = datetime.strptime(review_date, "%Y-%m-%d") if review_date else None
+        review = Review(review_id=row[2], review_headline=row[12], review_body=row[13], star_rating=row[7], helpful_votes=row[8], total_votes=row[9], review_date=convert_date)
+        
+        products.append(product)
+        reviews.append(review)
+    
+    print(f"Products: {products[0]}")
+    print(f"Reviews: {reviews[0]}")
+
+# excel_header_to_class()
+
+# insert and remove rows and cols
+# insert new rows into spreadsheet
+def insert_new_rows_into_spreadsheet(index: int, amount: int):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    sheet.insert_rows(idx=index, amount=amount)
+    workbook.save(filename=filename)
+
+# insert_new_rows_into_spreadsheet(1, 1) # Insert one row into the first row
+# insert_new_rows_into_spreadsheet(3, 5) # Insert three rows into the third row
+
+# remove rows from spreadsheet
+def remove_rows_from_spreadsheet(index: int, amount: int):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    sheet.delete_rows(idx=index, amount=amount)
+    workbook.save(filename=filename)
+
+# remove_rows_from_spreadsheet(1,1) # Remove one row from first row
+# remove_rows_from_spreadsheet(2, 5) # Remove three rows from second row
+    
+# insert new cols into spreadsheet
+def insert_new_cols_into_spreadsheet(index: int, amount: int):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    sheet.insert_cols(idx=index, amount=amount)
+    workbook.save(filename=filename)
+
+# insert_new_cols_into_spreadsheet(1, 1) # Insert one col into the first col
+# insert_new_cols_into_spreadsheet(3, 5) # Insert three cols into the third col
+
+# remove cols from spreadsheet
+def remove_cols_from_spreadsheet(index: int, amount: int):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    sheet.delete_cols(idx=index, amount=amount)
+    workbook.save(filename=filename)
+
+# remove_cols_from_spreadsheet(1,1) # Remove one col from first col
+# remove_cols_from_spreadsheet(2, 5) # Remove three cols from second col
+
+
+# Update the old values with new values
+def update_cell_value(cell_pos, new_value):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    sheet[cell_pos] = new_value
+    workbook.save(filename=filename)
+
+# update_cell_value("B1", "Everyone") # "World" => "Everyone"
+
+# Working with Sheets
+def sheet_manage():
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    print(f"Sheets: {workbook.sheetnames}")
+    sheet = workbook.active
+    
+    #** Create New Sheets
+    # print("Adding new sheets: 'product_sheet' and 'sales_sheet'")
+    # product_sheet = workbook.create_sheet('product_sheet', 1)
+    # sale_sheet = workbook.create_sheet('sale_sheet', 0)
+    # print(f"Sheets: {workbook.sheetnames}")
+    
+    #** Adding value to created sheets
+    # print("Add new values to product_sheet")
+    # product_sheet = workbook['product_sheet']
+    # product_sheet["A1"] = "This is product sheet and the A1 is Hello"
+    # print("Add new values to sale_sheet")
+    # sale_sheet = workbook['sale_sheet']
+    # sale_sheet["A1"] = "This is sale sheet and the A1 is Hello"
+    
+    #** Remove sheets
+    # print("Remove sale sheet")
+    # sale_sheet = workbook['sale_sheet']
+    # workbook.remove(sale_sheet)
+    # print(f"Sheets: {workbook.sheetnames}")
+    workbook.save(filename=filename)
+    
+sheet_manage()
