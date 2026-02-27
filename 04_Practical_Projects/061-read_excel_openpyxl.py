@@ -327,6 +327,32 @@ def sheet_manage():
     # sale_sheet = workbook['sale_sheet']
     # workbook.remove(sale_sheet)
     # print(f"Sheets: {workbook.sheetnames}")
+    
     workbook.save(filename=filename)
     
-sheet_manage()
+# sheet_manage()
+
+
+# Freeze the custom cell
+def freeze_cell(cell_pos:str):
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/hello_world.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook["Sheet"]
+    sheet.freeze_panes = cell_pos
+    workbook.save(filename=filename)
+
+# freeze_cell("A2")
+
+
+# Add Filter into spreadsheet to sort and filter
+def adding_filter():
+    from openpyxl import load_workbook
+    filename = "./files/openpyxl_files/openpyxl_sample_data.xlsx"
+    workbook = load_workbook(filename=filename)
+    sheet = workbook.active
+    print(f"Sheet Dimension: {sheet.dimensions}")
+    sheet.auto_filter.ref = str(sheet.dimensions)
+    workbook.save(filename=filename)
+
+# adding_filter()
